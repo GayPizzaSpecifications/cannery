@@ -40,7 +40,7 @@ class CannedMac: ObservableObject {
     var vmVncServer: _VZVNCServer?
     #endif
 
-    func createVmConfiguration(_ options: VirtualMachineOptions) async throws -> (VZVirtualMachineConfiguration, VZMacOSRestoreImage?) {
+    func createVmConfiguration(_ options: VirtualMachineOptions, displaySize: CGSize?) async throws -> (VZVirtualMachineConfiguration, VZMacOSRestoreImage?) {
         let existingHardwareModel = try loadMacHardwareModel()
 
         let model: VZMacHardwareModel
@@ -119,10 +119,24 @@ class CannedMac: ObservableObject {
         let gpu = VZMacGraphicsDeviceConfiguration()
 
         let resolution = options.displayResolution
+
+        let widthInPixels: Int
+        let heightInPixels: Int
+        let pixelsPerInch: Int
+        if let displaySize = displaySize {
+            widthInPixels = Int(displaySize.width)
+            heightInPixels = Int(displaySize.height)
+            pixelsPerInch = 80
+        } else {
+            widthInPixels = resolution.width
+            heightInPixels = resolution.height
+            pixelsPerInch = 80
+        }
+
         let display = VZMacGraphicsDisplayConfiguration(
-            widthInPixels: resolution.width,
-            heightInPixels: resolution.height,
-            pixelsPerInch: resolution.pixelsPerInch
+            widthInPixels: widthInPixels,
+            heightInPixels: heightInPixels,
+            pixelsPerInch: pixelsPerInch
         )
         gpu.displays.append(display)
         configuration.graphicsDevices.append(gpu)
@@ -157,7 +171,7 @@ class CannedMac: ObservableObject {
     }
 
     @MainActor
-    func bootVirtualMachine(_ options: VirtualMachineOptions) async throws {
+    func bootVirtualMachine(_ options: VirtualMachineOptions, currentViewSize: CGSize) async throws {
         #if CANNED_MAC_USE_PRIVATE_APIS
         if vmVncServer != nil {
             vmVncServer!.stop()
@@ -165,7 +179,8 @@ class CannedMac: ObservableObject {
         }
         #endif
 
-        let (configuration, macRestoreImage) = try await createVmConfiguration(options)
+        let currentViewSizeAutomatic = options.displayResolution.isAutomatic ? currentViewSize : nil
+        let (configuration, macRestoreImage) = try await createVmConfiguration(options, displaySize: currentViewSizeAutomatic)
         let vm = VZVirtualMachine(configuration: configuration, queue: DispatchQueue.main)
 
         if let macRestoreImage = macRestoreImage {

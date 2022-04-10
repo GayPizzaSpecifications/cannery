@@ -58,6 +58,7 @@ struct CannedMacSettings: View {
                 Picker("Display Resolution", selection: $virtualMachineDisplayResolution) {
                     Text("1920x1080").tag(DisplayResolution.r1920_1080)
                     Text("3840x2160").tag(DisplayResolution.r3840_2160)
+                    Text("Window Size on Boot").tag(DisplayResolution.automatic)
                 }
             }
 
