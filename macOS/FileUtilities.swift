@@ -56,8 +56,13 @@ struct FileUtilities {
 
     static func getApplicationSupportDirectory() throws -> URL {
         let url = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        let vmDirUrl = url.appendingPathComponent("macOS.vm")
+        let vmDirUrl = url.appendingPathComponent("macOS-Virtual-Machines")
         try FileManager.default.createDirectory(at: vmDirUrl, withIntermediateDirectories: true)
         return vmDirUrl
+    }
+
+    static func getLegacyApplicationSupportDirectory() throws -> URL {
+        let url = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        return url.appendingPathComponent("macOS.vm")
     }
 }

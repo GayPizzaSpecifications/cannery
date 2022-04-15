@@ -22,6 +22,7 @@
 		2AD7151827EDA70300EDD14E /* DisplayResolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD7151727EDA70300EDD14E /* DisplayResolution.swift */; };
 		2AD7151C27EDD53600EDD14E /* VirtualMachineOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD7151B27EDD53600EDD14E /* VirtualMachineOptions.swift */; };
 		2AD7152027EDF7C100EDD14E /* SerialPortType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD7151F27EDF7C100EDD14E /* SerialPortType.swift */; };
+		2AE72AF628091CB800CEA382 /* FoundationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE72AF528091CB800CEA382 /* FoundationExtensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 		2AD7151727EDA70300EDD14E /* DisplayResolution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayResolution.swift; sourceTree = "<group>"; };
 		2AD7151B27EDD53600EDD14E /* VirtualMachineOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualMachineOptions.swift; sourceTree = "<group>"; };
 		2AD7151F27EDF7C100EDD14E /* SerialPortType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerialPortType.swift; sourceTree = "<group>"; };
+		2AE72AF528091CB800CEA382 /* FoundationExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationExtensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +84,7 @@
 				2AD7151727EDA70300EDD14E /* DisplayResolution.swift */,
 				2AAE43CE27EA9D35005A8EE0 /* DownloadInstallerView.swift */,
 				2AAE43D227EAA779005A8EE0 /* FileUtilities.swift */,
+				2AE72AF528091CB800CEA382 /* FoundationExtensions.swift */,
 				2AAE43D827EABEFD005A8EE0 /* InstallerView.swift */,
 				2AD7151F27EDF7C100EDD14E /* SerialPortType.swift */,
 				2AAE43D427EAA947005A8EE0 /* UserError.swift */,
@@ -172,6 +175,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2AE72AF628091CB800CEA382 /* FoundationExtensions.swift in Sources */,
 				2AAE43D127EAA42C005A8EE0 /* CannedMac.swift in Sources */,
 				2AAE43CF27EA9D35005A8EE0 /* DownloadInstallerView.swift in Sources */,
 				2AD7151827EDA70300EDD14E /* DisplayResolution.swift in Sources */,

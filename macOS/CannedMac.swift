@@ -11,6 +11,8 @@ import SwiftUI
 import Virtualization
 
 class CannedMac: ObservableObject {
+    static let defaultVirtualMachineName = "macOS"
+
     @Published
     var state: CannedMacState = .unknown
 
@@ -39,6 +41,17 @@ class CannedMac: ObservableObject {
     #if CANNED_MAC_USE_PRIVATE_APIS
     var vmVncServer: _VZVNCServer?
     #endif
+
+    let virtualMachineName: String
+
+    init(virtualMachineName: String = defaultVirtualMachineName) {
+        self.virtualMachineName = virtualMachineName
+        do {
+            try migrateOldDirectoryIfNecessary()
+        } catch {
+            fatalError("Failed to migrate old virtual machine format: \(error.localizedDescription)")
+        }
+    }
 
     func createVmConfiguration(_ options: VirtualMachineOptions, displaySize: CGSize?) async throws -> (VZVirtualMachineConfiguration, VZMacOSRestoreImage?) {
         let existingHardwareModel = try loadMacHardwareModel()
@@ -152,9 +165,9 @@ class CannedMac: ObservableObject {
         #endif
 
         if options.serialPortOutputEnabled {
-            let applicationSupportDirectoryUrl = try FileUtilities.getApplicationSupportDirectory()
-            let serialOutputUrl = applicationSupportDirectoryUrl.appendingPathComponent("serial0.out")
-            if FileManager.default.fileExists(atPath: serialOutputUrl.path) {
+            let virtualMachineDirectory = try getVirtualMachineDirectory()
+            let serialOutputUrl = virtualMachineDirectory.appendingPathComponent("serial0.out")
+            if FileManager.default.fileExists(at: serialOutputUrl) {
                 try FileManager.default.removeItem(at: serialOutputUrl)
             }
             FileManager.default.createFile(atPath: serialOutputUrl.path, contents: nil)
@@ -239,15 +252,15 @@ class CannedMac: ObservableObject {
             }
         }
 
-        try doApplicationSupportDelete()
+        try deleteVirtualMachineDirectory()
         isResetRequested = false
     }
 
     func loadMacHardwareModel() throws -> VZMacHardwareModel? {
-        let applicationSupportDirectoryUrl = try FileUtilities.getApplicationSupportDirectory()
-        let hardwareModelUrl = applicationSupportDirectoryUrl.appendingPathComponent("machw.bin")
+        let virtualMachineDirectory = try getVirtualMachineDirectory()
+        let hardwareModelUrl = virtualMachineDirectory.appendingPathComponent("machw.bin")
 
-        if FileManager.default.fileExists(atPath: hardwareModelUrl.path) {
+        if FileManager.default.fileExists(at: hardwareModelUrl) {
             let data = try Data(contentsOf: hardwareModelUrl)
             return VZMacHardwareModel(dataRepresentation: data)
         }
@@ -255,15 +268,15 @@ class CannedMac: ObservableObject {
     }
 
     func saveMacHardwareModel(_ model: VZMacHardwareModel) throws {
-        let applicationSupportDirectoryUrl = try FileUtilities.getApplicationSupportDirectory()
-        let hardwareModelUrl = applicationSupportDirectoryUrl.appendingPathComponent("machw.bin")
+        let virtualMachineDirectory = try getVirtualMachineDirectory()
+        let hardwareModelUrl = virtualMachineDirectory.appendingPathComponent("machw.bin")
         try model.dataRepresentation.write(to: hardwareModelUrl)
     }
 
     func downloadLatestSupportImage() async throws -> VZMacOSRestoreImage {
-        let applicationSupportDirectoryUrl = try FileUtilities.getApplicationSupportDirectory()
-        let restoreIpswFileUrl = applicationSupportDirectoryUrl.appendingPathComponent("restore.ipsw")
-        if FileManager.default.fileExists(atPath: restoreIpswFileUrl.path) {
+        let virtualMachineDirectory = try getVirtualMachineDirectory()
+        let restoreIpswFileUrl = virtualMachineDirectory.appendingPathComponent("restore.ipsw")
+        if FileManager.default.fileExists(at: restoreIpswFileUrl) {
             return try await VZMacOSRestoreImage.image(from: restoreIpswFileUrl)
         }
 
@@ -303,10 +316,10 @@ class CannedMac: ObservableObject {
     }
 
     func loadOrCreateAuxilaryStorage(_ model: VZMacHardwareModel) throws -> VZMacAuxiliaryStorage {
-        let applicationSupportDirectoryUrl = try FileUtilities.getApplicationSupportDirectory()
-        let auxilaryStorageUrl = applicationSupportDirectoryUrl.appendingPathComponent("macaux.bin")
+        let virtualMachineDirectory = try getVirtualMachineDirectory()
+        let auxilaryStorageUrl = virtualMachineDirectory.appendingPathComponent("macaux.bin")
 
-        if FileManager.default.fileExists(atPath: auxilaryStorageUrl.path) {
+        if FileManager.default.fileExists(at: auxilaryStorageUrl) {
             return VZMacAuxiliaryStorage(contentsOf: auxilaryStorageUrl)
         } else {
             return try VZMacAuxiliaryStorage(creatingStorageAt: auxilaryStorageUrl, hardwareModel: model)
@@ -314,10 +327,10 @@ class CannedMac: ObservableObject {
     }
 
     func loadOrCreateMachineIdentifier() throws -> VZMacMachineIdentifier {
-        let applicationSupportDirectoryUrl = try FileUtilities.getApplicationSupportDirectory()
-        let macIdentifierUrl = applicationSupportDirectoryUrl.appendingPathComponent("macid.bin")
+        let virtualMachineDirectory = try getVirtualMachineDirectory()
+        let macIdentifierUrl = virtualMachineDirectory.appendingPathComponent("macid.bin")
 
-        if FileManager.default.fileExists(atPath: macIdentifierUrl.path) {
+        if FileManager.default.fileExists(at: macIdentifierUrl) {
             let data = try Data(contentsOf: macIdentifierUrl)
             return VZMacMachineIdentifier(dataRepresentation: data)!
         } else {
@@ -329,10 +342,10 @@ class CannedMac: ObservableObject {
     }
 
     func loadOrCreateMacAddress(_ randomAddress: VZMACAddress) throws -> VZMACAddress {
-        let applicationSupportDirectoryUrl = try FileUtilities.getApplicationSupportDirectory()
-        let macAddressUrl = applicationSupportDirectoryUrl.appendingPathComponent("macaddress.bin")
+        let virtualMachineDirectory = try getVirtualMachineDirectory()
+        let macAddressUrl = virtualMachineDirectory.appendingPathComponent("macaddress.bin")
 
-        if FileManager.default.fileExists(atPath: macAddressUrl.path) {
+        if FileManager.default.fileExists(at: macAddressUrl) {
             let data = try Data(contentsOf: macAddressUrl)
             let string = String(data: data, encoding: .utf8)!
             return VZMACAddress(string: string)!
@@ -345,10 +358,10 @@ class CannedMac: ObservableObject {
     }
 
     func getOrCreateDiskImage() throws -> VZDiskImageStorageDeviceAttachment {
-        let applicationSupportDirectoryUrl = try FileUtilities.getApplicationSupportDirectory()
-        let diskImageUrl = applicationSupportDirectoryUrl.appendingPathComponent("disk.img")
+        let virtualMachineDirectory = try getVirtualMachineDirectory()
+        let diskImageUrl = virtualMachineDirectory.appendingPathComponent("disk.img")
 
-        if FileManager.default.fileExists(atPath: diskImageUrl.path) {
+        if FileManager.default.fileExists(at: diskImageUrl) {
             return try VZDiskImageStorageDeviceAttachment(url: diskImageUrl, readOnly: false)
         } else {
             var diskSpaceToUse = Int64(128 * 1024 * 1024 * 1024)
@@ -378,10 +391,36 @@ class CannedMac: ObservableObject {
         return virtualCPUCount
     }
 
-    func doApplicationSupportDelete() throws {
+    func deleteVirtualMachineDirectory() throws {
+        let virtualMachineDirectory = try getVirtualMachineDirectory()
+        try FileManager.default.trashItem(at: virtualMachineDirectory, resultingItemURL: nil)
+        _ = try getVirtualMachineDirectory()
+    }
+
+    func getVirtualMachineDirectory(createIfNotExists: Bool = true) throws -> URL {
         let applicationSupportDirectoryUrl = try FileUtilities.getApplicationSupportDirectory()
-        try FileManager.default.trashItem(at: applicationSupportDirectoryUrl, resultingItemURL: nil)
-        _ = try FileUtilities.getApplicationSupportDirectory()
+        let virtualMachineDirectory = applicationSupportDirectoryUrl.appendingPathComponent(virtualMachineName)
+        if createIfNotExists {
+            try FileManager.default.createDirectory(at: virtualMachineDirectory, withIntermediateDirectories: true)
+        }
+        return virtualMachineDirectory
+    }
+
+    func migrateOldDirectoryIfNecessary() throws {
+        if virtualMachineName != CannedMac.defaultVirtualMachineName {
+            return
+        }
+
+        let legacyMachineDirectory = try FileUtilities.getLegacyApplicationSupportDirectory()
+
+        var isDirectory: ObjCBool = false
+        if !FileManager.default.fileExists(at: legacyMachineDirectory, isDirectory: &isDirectory),
+           !isDirectory.boolValue {
+            return
+        }
+
+        let virtualMachineDirectory = try getVirtualMachineDirectory(createIfNotExists: false)
+        try FileManager.default.moveItem(at: legacyMachineDirectory, to: virtualMachineDirectory)
     }
 
     func setCurrentError(_ error: Error) {
