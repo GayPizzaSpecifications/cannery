@@ -59,7 +59,6 @@ class CannedMac: ObservableObject {
         let model: VZMacHardwareModel
         let macRestoreImage: VZMacOSRestoreImage?
         if existingHardwareModel == nil {
-            state = .downloadInstaller
             let image = try await downloadLatestSupportImage()
 
             guard let mostFeaturefulSupportedConfiguration = image.mostFeaturefulSupportedConfiguration else {
@@ -279,6 +278,8 @@ class CannedMac: ObservableObject {
         if FileManager.default.fileExists(at: restoreIpswFileUrl) {
             return try await VZMacOSRestoreImage.image(from: restoreIpswFileUrl)
         }
+
+        state = .downloadInstaller
 
         let image = try await VZMacOSRestoreImage.latestSupported
         let future: Future<URL?, Error> = Future { promise in

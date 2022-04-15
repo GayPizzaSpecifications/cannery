@@ -50,4 +50,6 @@ struct DisplayResolution: Codable, RawRepresentable, Hashable {
     var isAutomatic: Bool { width == 0 && height == 0 && pixelsPerInch == 0 }
 
     var hashValue: Int { rawValue.hashValue }
+
+    var cgSize: CGSize { CGSize(width: width, height: height) }
 }

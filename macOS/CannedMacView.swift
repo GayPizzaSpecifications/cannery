@@ -117,7 +117,7 @@ struct CannedMacView: View {
 
     func bootVirtualMachine() async {
         do {
-            try await can.bootVirtualMachine(VirtualMachineOptions.loadFromUserDefaults(), currentViewSize: size ?? CGSize.zero)
+            try await can.bootVirtualMachine(VirtualMachineOptions.loadFromUserDefaults(), currentViewSize: size ?? DisplayResolution.r1920_1080.cgSize)
         } catch {
             can.setCurrentError(error)
         }

@@ -10,7 +10,8 @@ import SwiftUI
 @main
 struct CannedMacApp: App {
     @ObservedObject
-    var can = CannedMac()
+    var can = CannedMac(virtualMachineName: UserDefaults.standard.string(
+        forKey: "virtualMachineName") ?? CannedMac.defaultVirtualMachineName)
 
     var body: some Scene {
         WindowGroup {

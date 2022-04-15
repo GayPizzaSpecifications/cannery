@@ -9,7 +9,7 @@ import Foundation
 
 struct FileUtilities {
     static func createSparseImage(_ url: URL, size: Int64) throws {
-        try adviseEnoughDiskSpace(url, size: size)
+        try adviseEnoughDiskSpace(url.deletingLastPathComponent(), size: size)
 
         let diskFd = open(url.path, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR)
         if diskFd == -1 {
@@ -27,7 +27,7 @@ struct FileUtilities {
         }
     }
 
-    static func adviseEnoughDiskSpace(_: URL, size: Int64) throws {
+    static func adviseEnoughDiskSpace(_ url: URL, size: Int64) throws {
         func throwDiskSpaceUnavailable(_ available: Int64) throws {
             let formatter = ByteCountFormatter()
             let neededSizePretty = formatter.string(fromByteCount: size)
@@ -36,7 +36,7 @@ struct FileUtilities {
             throw UserError(.DiskSpaceUnavailable, "Need \(neededSizePretty) of disk space, but only \(availableSizePretty) was available.")
         }
 
-        let diskSpaceAvailable = try diskSpaceAvailable()
+        let diskSpaceAvailable = try diskSpaceAvailable(url)
         if diskSpaceAvailable < size {
             try throwDiskSpaceUnavailable(diskSpaceAvailable)
         }
