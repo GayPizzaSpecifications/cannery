@@ -32,6 +32,9 @@ struct CannedMacView: View {
     @State
     var size: CGSize?
 
+    @State
+    var nextMachineName: String = ""
+
     var body: some View {
         GeometryReader { geometry in
             VirtualMachineView(can.vm, capturesSystemKeys: true)
@@ -72,6 +75,30 @@ struct CannedMacView: View {
                         .frame(minWidth: 300, minHeight: 100)
                         .padding(.horizontal, 100)
                         .padding(.vertical)
+                }
+                .sheet(isPresented: $can.isSwitchMachine) {
+                    Form {
+                        VStack {
+                            TextField("Virtual Machine Name", text: $nextMachineName)
+                                .frame(minWidth: 350.0)
+
+                            HStack {
+                                Button("Cancel", role: .cancel) {
+                                    can.isSwitchMachine = false
+                                }
+
+                                Button("Switch") {
+                                    can.swapMachineName(name: nextMachineName)
+                                    Task {
+                                        await bootVirtualMachine()
+                                    }
+                                }
+                            }
+                        }
+                    }.padding()
+                }
+                .onChange(of: can.virtualMachineName) { nextMachineName in
+                    self.nextMachineName = nextMachineName
                 }
                 .onChange(of: can.state) { state in
                     isDownloadRestoreImageShown = state == .downloadInstaller

@@ -23,6 +23,10 @@ struct CannedMacApp: App {
                 Button("Reset Virtual Machine") {
                     can.isResetRequested = true
                 }
+
+                Button("Switch Virtual Machine") {
+                    can.isSwitchMachine = true
+                }
             }
 
             CommandGroup(replacing: .newItem) {}

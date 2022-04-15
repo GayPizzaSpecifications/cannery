@@ -34,6 +34,9 @@ class CannedMac: ObservableObject {
     @Published
     var isResetRequested: Bool = false
 
+    @Published
+    var isSwitchMachine: Bool = false
+
     var downloadProgressObserver: NSKeyValueObservation?
     var installProgressObserver: NSKeyValueObservation?
     var currentStateObserver: NSKeyValueObservation?
@@ -42,7 +45,7 @@ class CannedMac: ObservableObject {
     var vmVncServer: _VZVNCServer?
     #endif
 
-    let virtualMachineName: String
+    var virtualMachineName: String
 
     init(virtualMachineName: String = defaultVirtualMachineName) {
         self.virtualMachineName = virtualMachineName
@@ -51,6 +54,16 @@ class CannedMac: ObservableObject {
         } catch {
             fatalError("Failed to migrate old virtual machine format: \(error.localizedDescription)")
         }
+    }
+
+    func swapMachineName(name: String) {
+        isSwitchMachine = false
+        if virtualMachineName == name {
+            return
+        }
+        UserDefaults.standard.set(name, forKey: "virtualMachineName")
+        vm = nil
+        virtualMachineName = name
     }
 
     func createVmConfiguration(_ options: VirtualMachineOptions, displaySize: CGSize?) async throws -> (VZVirtualMachineConfiguration, VZMacOSRestoreImage?) {
