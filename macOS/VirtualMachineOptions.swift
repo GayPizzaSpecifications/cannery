@@ -14,6 +14,8 @@ struct VirtualMachineOptions: Codable {
     #if CANNED_MAC_USE_PRIVATE_APIS
     var bootToRecovery: Bool = false
     var bootToDfuMode: Bool = false
+    var stopInIBootStage1: Bool = false
+    var stopInIBootStage2: Bool = false
     var gdbDebugStub: Bool = false
     var macInputMode: Bool = false
     var vncServerEnabled: Bool = false
@@ -44,6 +46,8 @@ struct VirtualMachineOptions: Codable {
         #if CANNED_MAC_USE_PRIVATE_APIS
         options.bootToRecovery = defaults.bool(forKey: "virtualMachineBootRecovery")
         options.bootToDfuMode = defaults.bool(forKey: "virtualMachineBootDfu")
+        options.stopInIBootStage1 = defaults.bool(forKey: "virtualMachineBootStopInIBootStage1")
+        options.stopInIBootStage2 = defaults.bool(forKey: "virtualMachineBootStopInIBootStage2")
         options.gdbDebugStub = defaults.bool(forKey: "virtualMachineEnableDebugStub")
         options.vncServerEnabled = defaults.bool(forKey: "virtualMachineEnableVncServer")
         options.vncServerPort = defaults.integer(forKey: "virtualMachineVncServerPort")

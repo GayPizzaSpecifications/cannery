@@ -23,6 +23,12 @@ struct CannedMacSettings: View {
     @AppStorage("virtualMachineBootDfu")
     var virtualMachineBootDfu = false
 
+    @AppStorage("virtualMachineBootStopInIBootStage1")
+    var virtualMachineBootStopInIBootStage1 = false
+
+    @AppStorage("virtualMachineBootStopInIBootStage2")
+    var virtualMachineBootStopInIBootStage2 = false
+
     @AppStorage("virtualMachineEnableDebugStub")
     var virtualMachineEnableDebugStub = false
 
@@ -70,6 +76,8 @@ struct CannedMacSettings: View {
                 #if CANNED_MAC_USE_PRIVATE_APIS
                 Toggle("Force Recovery Mode", isOn: $virtualMachineBootRecovery)
                 Toggle("Force DFU Mode", isOn: $virtualMachineBootDfu)
+                Toggle("Stop in iBoot Stage 1", isOn: $virtualMachineBootStopInIBootStage1)
+                Toggle("Stop in iBoot Stage 2", isOn: $virtualMachineBootStopInIBootStage2)
                 #endif
             }
 

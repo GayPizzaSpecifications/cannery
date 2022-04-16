@@ -256,6 +256,8 @@ class CannedMac: ObservableObject {
         let startOptions = VZExtendedVirtualMachineStartOptions()
         startOptions.bootMacOSRecovery = options.bootToRecovery
         startOptions.forceDFU = options.bootToDfuMode
+        startOptions.stopInIBootStage1 = options.stopInIBootStage1
+        startOptions.stopInIBootStage2 = options.stopInIBootStage2
         try await vm.extendedStart(with: startOptions)
         #else
         try await vm.start()
