@@ -23,6 +23,8 @@
 		2AD7151C27EDD53600EDD14E /* VirtualMachineOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD7151B27EDD53600EDD14E /* VirtualMachineOptions.swift */; };
 		2AD7152027EDF7C100EDD14E /* SerialPortType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD7151F27EDF7C100EDD14E /* SerialPortType.swift */; };
 		2AE72AF628091CB800CEA382 /* FoundationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE72AF528091CB800CEA382 /* FoundationExtensions.swift */; };
+		2AE72B55280B0F6900CEA382 /* SwiftTerm in Frameworks */ = {isa = PBXBuildFile; productRef = 2AE72B54280B0F6900CEA382 /* SwiftTerm */; };
+		2AE72B57280B108200CEA382 /* ConsoleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE72B56280B108200CEA382 /* ConsoleViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +46,7 @@
 		2AD7151B27EDD53600EDD14E /* VirtualMachineOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualMachineOptions.swift; sourceTree = "<group>"; };
 		2AD7151F27EDF7C100EDD14E /* SerialPortType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerialPortType.swift; sourceTree = "<group>"; };
 		2AE72AF528091CB800CEA382 /* FoundationExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationExtensions.swift; sourceTree = "<group>"; };
+		2AE72B56280B108200CEA382 /* ConsoleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2AE72B55280B0F6900CEA382 /* SwiftTerm in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,6 +85,7 @@
 				2AAE43BF27EA9CFB005A8EE0 /* CannedMacApp.swift */,
 				2AD7150D27EC316D00EDD14E /* CannedMacSettings.swift */,
 				2AAE43C127EA9CFB005A8EE0 /* CannedMacView.swift */,
+				2AE72B56280B108200CEA382 /* ConsoleViewController.swift */,
 				2AD7151727EDA70300EDD14E /* DisplayResolution.swift */,
 				2AAE43CE27EA9D35005A8EE0 /* DownloadInstallerView.swift */,
 				2AAE43D227EAA779005A8EE0 /* FileUtilities.swift */,
@@ -121,6 +126,9 @@
 			dependencies = (
 			);
 			name = macOS;
+			packageProductDependencies = (
+				2AE72B54280B0F6900CEA382 /* SwiftTerm */,
+			);
 			productName = macOS;
 			productReference = 2AAE43BC27EA9CFB005A8EE0 /* macOS.app */;
 			productType = "com.apple.product-type.application";
@@ -149,6 +157,9 @@
 				Base,
 			);
 			mainGroup = 2AAE43B327EA9CFB005A8EE0;
+			packageReferences = (
+				2AE72B53280B0F6900CEA382 /* XCRemoteSwiftPackageReference "SwiftTerm" */,
+			);
 			productRefGroup = 2AAE43BD27EA9CFB005A8EE0 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -189,6 +200,7 @@
 				2AD7150E27EC316D00EDD14E /* CannedMacSettings.swift in Sources */,
 				2AAE43D527EAA947005A8EE0 /* UserError.swift in Sources */,
 				2AAE43D927EABEFD005A8EE0 /* InstallerView.swift in Sources */,
+				2AE72B57280B108200CEA382 /* ConsoleViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -388,6 +400,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2AE72B53280B0F6900CEA382 /* XCRemoteSwiftPackageReference "SwiftTerm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/migueldeicaza/SwiftTerm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2AE72B54280B0F6900CEA382 /* SwiftTerm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2AE72B53280B0F6900CEA382 /* XCRemoteSwiftPackageReference "SwiftTerm" */;
+			productName = SwiftTerm;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2AAE43B427EA9CFB005A8EE0 /* Project object */;
 }

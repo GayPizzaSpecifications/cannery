@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "swiftterm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/migueldeicaza/SwiftTerm.git",
+      "state" : {
+        "revision" : "70a3af884c24dff9f1beeda04e889b5591f04f3c",
+        "version" : "1.0.7"
+      }
+    }
+  ],
+  "version" : 2
+}

@@ -93,10 +93,10 @@ struct CannedMacSettings: View {
             #endif
 
             Section(header: Text("Advanced")) {
-                Toggle("Serial Port Output", isOn: $virtualMachineEnableSerialPortOutput)
+                Toggle("Serial Port Console", isOn: $virtualMachineEnableSerialPortOutput)
 
                 if virtualMachineEnableSerialPortOutput {
-                    Picker("Serial Port Output Type", selection: $virtualMachineSerialPortOutputType) {
+                    Picker("Serial Port Type", selection: $virtualMachineSerialPortOutputType) {
                         Text("Virtio").tag(SerialPortType.virtio)
                         #if CANNED_MAC_USE_PRIVATE_APIS
                         Text("PL011").tag(SerialPortType.pl011)

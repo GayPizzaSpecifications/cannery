@@ -47,6 +47,20 @@ class CannedMac: ObservableObject {
 
     var virtualMachineName: String
 
+    private let serialReadPipe = Pipe()
+    private let serialWritePipe = Pipe()
+
+    private lazy var consoleWindow: NSWindow = {
+        let viewController = ConsoleViewController()
+        viewController.configure(with: serialReadPipe, writePipe: serialWritePipe)
+        return NSWindow(contentViewController: viewController)
+    }()
+
+    private lazy var consoleWindowController: NSWindowController = {
+        let windowController = NSWindowController(window: consoleWindow)
+        return windowController
+    }()
+
     init(virtualMachineName: String = defaultVirtualMachineName) {
         self.virtualMachineName = virtualMachineName
         do {
@@ -172,18 +186,13 @@ class CannedMac: ObservableObject {
         #endif
 
         if options.serialPortOutputEnabled {
-            let virtualMachineDirectory = try getVirtualMachineDirectory()
-            let serialOutputUrl = virtualMachineDirectory.appendingPathComponent("serial0.out")
-            if FileManager.default.fileExists(at: serialOutputUrl) {
-                try FileManager.default.removeItem(at: serialOutputUrl)
-            }
-            FileManager.default.createFile(atPath: serialOutputUrl.path, contents: nil)
-            let handle = try FileHandle(forWritingTo: serialOutputUrl)
             let serialPort = options.serialPortOutputType.createSerialPortConfiguration()
             serialPort.attachment = VZFileHandleSerialPortAttachment(
-                fileHandleForReading: nil, fileHandleForWriting: handle
+                fileHandleForReading: serialWritePipe.fileHandleForReading,
+                fileHandleForWriting: serialReadPipe.fileHandleForWriting
             )
             configuration.serialPorts.append(serialPort)
+            showSerialConsole()
         }
 
         try configuration.validate()
@@ -192,6 +201,7 @@ class CannedMac: ObservableObject {
 
     @MainActor
     func bootVirtualMachine(_ options: VirtualMachineOptions, currentViewSize: CGSize) async throws {
+        (consoleWindow.contentViewController as! ConsoleViewController).clearConsoleView()
         #if CANNED_MAC_USE_PRIVATE_APIS
         if vmVncServer != nil {
             vmVncServer!.stop()
@@ -425,8 +435,7 @@ class CannedMac: ObservableObject {
 
         var isDirectory: ObjCBool = false
         if !FileManager.default.fileExists(at: legacyMachineDirectory, isDirectory: &isDirectory),
-           !isDirectory.boolValue
-        {
+           !isDirectory.boolValue {
             return
         }
 
@@ -437,6 +446,14 @@ class CannedMac: ObservableObject {
     func setCurrentError(_ error: Error) {
         state = .error
         self.error = error
+    }
+
+    func showSerialConsole() {
+        if !consoleWindow.isVisible {
+            consoleWindow.setContentSize(NSSize(width: 640, height: 480))
+            consoleWindow.title = "Serial Console"
+            consoleWindowController.showWindow(nil)
+        }
     }
 }
 
