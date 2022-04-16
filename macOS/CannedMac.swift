@@ -114,29 +114,24 @@ class CannedMac: ObservableObject {
         network.attachment = VZNATNetworkDeviceAttachment()
         configuration.networkDevices.append(network)
 
-        let keyboard: VZKeyboardConfiguration
-        #if CANNED_MAC_USE_PRIVATE_APIS
-        if options.macInputMode {
-            keyboard = VZPrivateUtilities.createMacKeyboardConfiguration()
-        } else {
-            keyboard = VZUSBKeyboardConfiguration()
-        }
-        #else
-        keyboard = VZUSBKeyboardConfiguration()
-        #endif
-        configuration.keyboards.append(keyboard)
+        func configureDefaultInputDevices() {
+            let keyboard = VZUSBKeyboardConfiguration()
+            configuration.keyboards.append(keyboard)
 
-        let pointingDevice: VZPointingDeviceConfiguration
+            let pointingDevice = VZUSBScreenCoordinatePointingDeviceConfiguration()
+            configuration.pointingDevices.append(pointingDevice)
+        }
+
         #if CANNED_MAC_USE_PRIVATE_APIS
         if options.macInputMode {
-            pointingDevice = VZPrivateUtilities.createMacTrackpadConfiguration()
+            configuration.keyboards.append(VZPrivateUtilities.createMacKeyboardConfiguration())
+            configuration.pointingDevices.append(VZPrivateUtilities.createMacTrackpadConfiguration())
         } else {
-            pointingDevice = VZUSBScreenCoordinatePointingDeviceConfiguration()
+            configureDefaultInputDevices()
         }
         #else
-        pointingDevice = VZUSBScreenCoordinatePointingDeviceConfiguration()
+        configureDefaultInputDevices()
         #endif
-        configuration.pointingDevices.append(pointingDevice)
 
         let memoryBalloon = VZVirtioTraditionalMemoryBalloonDeviceConfiguration()
         configuration.memoryBalloonDevices.append(memoryBalloon)

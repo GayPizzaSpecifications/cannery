@@ -13,12 +13,20 @@ import Virtualization
     init()
 }
 
+@objc protocol _VZUSBTouchScreenConfiguration {
+    init()
+}
+
 @objc protocol _VZMacKeyboardConfiguration {
     init()
 }
 
 @objc protocol _VZMacTrackpadConfiguration {
     init()
+}
+
+@objc protocol _VZUSBMassStorageDeviceConfiguration {
+    init(attachment: VZStorageDeviceAttachment)
 }
 
 @objc protocol _VZEFIBootLoader {
@@ -38,6 +46,7 @@ import Virtualization
 
 @objc protocol _VZVirtualMachineConfiguration {
     var _debugStub: _VZGDBDebugStubConfiguration { get @objc(_setDebugStub:) set }
+    var _multiTouchDevices: [AnyObject] { get @objc(_setMultiTouchDevices:) set }
 }
 
 @objc protocol _VZVNCAuthenticationSecurityConfiguration {
@@ -157,6 +166,18 @@ enum VZPrivateUtilities {
         return unsafeBitCast(macTrackpad, to: VZPointingDeviceConfiguration.self)
     }
 
+    static func createAppleTouchScreenConfiguration() -> _VZAppleTouchScreenConfiguration {
+        unsafeBitCast(NSClassFromString("_VZAppleTouchScreenConfiguration")!, to: _VZAppleTouchScreenConfiguration.Type.self).init()
+    }
+
+    static func createUSBTouchScreenConfiguration() -> _VZUSBTouchScreenConfiguration {
+        unsafeBitCast(NSClassFromString("_VZUSBTouchScreenConfiguration")!, to: _VZUSBTouchScreenConfiguration.Type.self).init()
+    }
+
+    static func addMultiTouchDeviceConfiguration(_ device: AnyObject, to configuration: VZVirtualMachineConfiguration) {
+        unsafeBitCast(configuration, to: _VZVirtualMachineConfiguration.self)._multiTouchDevices = [device]
+    }
+
     static func createPL011SerialPortConfiguration() -> VZSerialPortConfiguration {
         let serialPort = unsafeBitCast(NSClassFromString("_VZPL011SerialPortConfiguration")!, to: _VZPL011SerialPortConfiguration.Type.self).init()
         return unsafeBitCast(serialPort, to: VZSerialPortConfiguration.self)
@@ -165,6 +186,10 @@ enum VZPrivateUtilities {
     static func create16550SerialPortConfiguration() -> VZSerialPortConfiguration {
         let serialPort = unsafeBitCast(NSClassFromString("_VZ16550SerialPortConfiguration")!, to: _VZ16550SerialPortConfiguration.Type.self).init()
         return unsafeBitCast(serialPort, to: VZSerialPortConfiguration.self)
+    }
+
+    static func createUSBMassStorageConfiguration(attachment: VZStorageDeviceAttachment) -> _VZUSBMassStorageDeviceConfiguration {
+        unsafeBitCast(NSClassFromString("_VZUSBMassStorageDeviceConfiguration")!, to: _VZUSBMassStorageDeviceConfiguration.Type.self).init(attachment: attachment)
     }
 }
 #endif
