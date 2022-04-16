@@ -245,6 +245,7 @@ class CannedMac: ObservableObject {
 
         let startOptions = VZExtendedVirtualMachineStartOptions()
         startOptions.bootMacOSRecovery = options.bootToRecovery
+        startOptions.forceDFU = options.bootToDfuMode
         try await vm.extendedStart(with: startOptions)
         #else
         try await vm.start()
@@ -424,7 +425,8 @@ class CannedMac: ObservableObject {
 
         var isDirectory: ObjCBool = false
         if !FileManager.default.fileExists(at: legacyMachineDirectory, isDirectory: &isDirectory),
-           !isDirectory.boolValue {
+           !isDirectory.boolValue
+        {
             return
         }
 
