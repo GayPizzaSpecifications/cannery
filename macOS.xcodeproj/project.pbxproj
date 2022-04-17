@@ -25,6 +25,7 @@
 		2AE72AF628091CB800CEA382 /* FoundationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE72AF528091CB800CEA382 /* FoundationExtensions.swift */; };
 		2AE72B55280B0F6900CEA382 /* SwiftTerm in Frameworks */ = {isa = PBXBuildFile; productRef = 2AE72B54280B0F6900CEA382 /* SwiftTerm */; };
 		2AE72B57280B108200CEA382 /* ConsoleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE72B56280B108200CEA382 /* ConsoleViewController.swift */; };
+		2AE72B59280C1DC300CEA382 /* VirtualMachineList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE72B58280C1DC300CEA382 /* VirtualMachineList.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +48,7 @@
 		2AD7151F27EDF7C100EDD14E /* SerialPortType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerialPortType.swift; sourceTree = "<group>"; };
 		2AE72AF528091CB800CEA382 /* FoundationExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationExtensions.swift; sourceTree = "<group>"; };
 		2AE72B56280B108200CEA382 /* ConsoleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleViewController.swift; sourceTree = "<group>"; };
+		2AE72B58280C1DC300CEA382 /* VirtualMachineList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualMachineList.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +96,7 @@
 				2AD7151F27EDF7C100EDD14E /* SerialPortType.swift */,
 				2AAE43D427EAA947005A8EE0 /* UserError.swift */,
 				2AD7151127ECFF5B00EDD14E /* VirtualizationPrivate.swift */,
+				2AE72B58280C1DC300CEA382 /* VirtualMachineList.swift */,
 				2AD7151B27EDD53600EDD14E /* VirtualMachineOptions.swift */,
 				2AAE43DA27EADF5B005A8EE0 /* VirtualMachineView.swift */,
 				2AAE43C327EA9CFC005A8EE0 /* Assets.xcassets */,
@@ -197,6 +200,7 @@
 				2AD7152027EDF7C100EDD14E /* SerialPortType.swift in Sources */,
 				2AD7151227ECFF5B00EDD14E /* VirtualizationPrivate.swift in Sources */,
 				2AAE43C027EA9CFB005A8EE0 /* CannedMacApp.swift in Sources */,
+				2AE72B59280C1DC300CEA382 /* VirtualMachineList.swift in Sources */,
 				2AD7150E27EC316D00EDD14E /* CannedMacSettings.swift in Sources */,
 				2AAE43D527EAA947005A8EE0 /* UserError.swift in Sources */,
 				2AAE43D927EABEFD005A8EE0 /* InstallerView.swift in Sources */,

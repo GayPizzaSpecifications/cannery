@@ -21,4 +21,5 @@ enum UserErrorKind {
     case DiskSpaceUnavailable
     case RestoreImageBad
     case DownloadFailed
+    case VirtualMachineExists
 }

@@ -33,7 +33,13 @@ struct CannedMacView: View {
     var size: CGSize?
 
     @State
-    var nextMachineName: String = ""
+    var nextMachineName: String
+
+    @State
+    var newMachineName: String = ""
+
+    @ObservedObject
+    var virtualMachineList = VirtualMachineList()
 
     var body: some View {
         GeometryReader { geometry in
@@ -79,8 +85,11 @@ struct CannedMacView: View {
                 .sheet(isPresented: $can.isSwitchMachine) {
                     Form {
                         VStack {
-                            TextField("Virtual Machine Name", text: $nextMachineName)
-                                .frame(minWidth: 350.0)
+                            Picker("Virtual Machine", selection: $nextMachineName) {
+                                ForEach(virtualMachineList.virtualMachinesNames, id: \.self) { name in
+                                    Text(name).tag(name)
+                                }
+                            }
 
                             HStack {
                                 Button("Cancel", role: .cancel) {
@@ -89,6 +98,34 @@ struct CannedMacView: View {
 
                                 Button("Switch") {
                                     can.swapMachineName(name: nextMachineName)
+                                    Task {
+                                        await bootVirtualMachine()
+                                    }
+                                }
+                            }
+                        }
+                    }.padding()
+                }
+                .sheet(isPresented: $can.isCreateMachine) {
+                    Form {
+                        VStack {
+                            TextField("Virtual Machine Name", text: $newMachineName)
+                                .frame(minWidth: 400)
+
+                            HStack {
+                                Button("Cancel", role: .cancel) {
+                                    can.isCreateMachine = false
+                                }
+
+                                Button("Create") {
+                                    do {
+                                        try virtualMachineList.addVirtualMachine(newMachineName)
+                                    } catch {
+                                        can.setCurrentError(error)
+                                        return
+                                    }
+
+                                    can.swapMachineName(name: newMachineName)
                                     Task {
                                         await bootVirtualMachine()
                                     }
@@ -112,6 +149,9 @@ struct CannedMacView: View {
                 }
                 .onChange(of: geometry.size) { value in
                     self.size = value
+                }
+                .onChange(of: can.virtualMachineName) { value in
+                    self.nextMachineName = value
                 }
                 .alert(can.error?.localizedDescription ?? "Unknown Error", isPresented: $isErrorShown) {}
                 .confirmationDialog("Reset Virtual Machine", isPresented: $isResetVirtualMachineDialogOpen) {
@@ -155,7 +195,8 @@ struct CannedMacView_Previews: PreviewProvider {
     static var previews: some View {
         CannedMacView(
             can: CannedMac(),
-            inhibitAutoBoot: true
+            inhibitAutoBoot: true,
+            nextMachineName: "macOS"
         )
     }
 }

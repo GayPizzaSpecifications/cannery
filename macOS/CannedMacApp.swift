@@ -15,11 +15,15 @@ struct CannedMacApp: App {
 
     var body: some Scene {
         WindowGroup {
-            CannedMacView(can: can)
+            CannedMacView(can: can, nextMachineName: can.virtualMachineName)
         }
         .windowToolbarStyle(.unifiedCompact)
         .commands {
             CommandGroup(after: .appSettings) {
+                Button("Create Virtual Machine") {
+                    can.isCreateMachine = true
+                }
+
                 Button("Reset Virtual Machine") {
                     can.isResetRequested = true
                 }

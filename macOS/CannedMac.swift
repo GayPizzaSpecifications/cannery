@@ -37,6 +37,9 @@ class CannedMac: ObservableObject {
     @Published
     var isSwitchMachine: Bool = false
 
+    @Published
+    var isCreateMachine: Bool = false
+
     var downloadProgressObserver: NSKeyValueObservation?
     var installProgressObserver: NSKeyValueObservation?
     var currentStateObserver: NSKeyValueObservation?
