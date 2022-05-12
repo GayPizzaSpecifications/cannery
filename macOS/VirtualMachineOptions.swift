@@ -8,7 +8,9 @@
 import Foundation
 
 struct VirtualMachineOptions: Codable {
-    var memoryInGigabytes: Int = 4
+    var virtualMachineName: String
+
+    var memoryInGigabytes: Float64 = 4
     var displayResolution: DisplayResolution = .r1920_1080
 
     #if CANNED_MAC_USE_PRIVATE_APIS
@@ -27,40 +29,10 @@ struct VirtualMachineOptions: Codable {
     var serialPortOutputEnabled: Bool = false
     var serialPortOutputType: SerialPortType = .virtio
 
-    static func loadFromUserDefaults(_ defaults: UserDefaults = UserDefaults.standard) -> VirtualMachineOptions {
-        var options = VirtualMachineOptions()
+    var restoreIpswPath: String? = nil
 
-        var memoryInGigabytes = defaults.double(forKey: "virtualMachineMemory")
-        if memoryInGigabytes == 0.0 {
-            memoryInGigabytes = 4.0
-        }
-        options.memoryInGigabytes = Int(memoryInGigabytes)
-
-        let displayResolutionRawValue = defaults.integer(forKey: "virtualMachineDisplayResolution")
-        options.displayResolution = DisplayResolution(rawValue: displayResolutionRawValue) ?? .r1920_1080
-        options.serialPortOutputEnabled = defaults.bool(forKey: "virtualMachineEnableSerialPortOutput")
-        let serialPortOutputTypeRawValue = defaults.integer(forKey: "virtualMachineSerialPortOutputType")
-        let serialPortOutputType = SerialPortType(rawValue: serialPortOutputTypeRawValue)
-        options.serialPortOutputType = serialPortOutputType
-
-        #if CANNED_MAC_USE_PRIVATE_APIS
-        options.bootToRecovery = defaults.bool(forKey: "virtualMachineBootRecovery")
-        options.bootToDfuMode = defaults.bool(forKey: "virtualMachineBootDfu")
-        options.stopInIBootStage1 = defaults.bool(forKey: "virtualMachineBootStopInIBootStage1")
-        options.stopInIBootStage2 = defaults.bool(forKey: "virtualMachineBootStopInIBootStage2")
-        options.gdbDebugStub = defaults.bool(forKey: "virtualMachineEnableDebugStub")
-        options.vncServerEnabled = defaults.bool(forKey: "virtualMachineEnableVncServer")
-        options.vncServerPort = defaults.integer(forKey: "virtualMachineVncServerPort")
-
-        if options.vncServerPort == 0 {
-            options.vncServerPort = 5905
-        }
-
-        options.vncServerAuthenticationEnabled = defaults.bool(forKey: "virtualMachineEnableVncServerAuthentication")
-        options.vncServerPassword = defaults.string(forKey: "virtualMachineVncServerPassword") ?? "hunter2"
-
-        options.macInputMode = defaults.bool(forKey: "virtualMachineEnableMacInput")
-        #endif
-        return options
+    func saveTo(url: URL) throws {
+        let encoded = try PropertyListEncoder().encode(self)
+        try encoded.write(to: url)
     }
 }

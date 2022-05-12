@@ -7,8 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2A1B6956281E862100DA9AE9 /* PlayButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A1B6955281E862100DA9AE9 /* PlayButtonView.swift */; };
+		2A1B6958281E87AE00DA9AE9 /* MacVirtualMachineContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A1B6957281E87AE00DA9AE9 /* MacVirtualMachineContainerView.swift */; };
+		2A1D702C2827254D006F964A /* VirtualMachineListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A1D702B2827254D006F964A /* VirtualMachineListView.swift */; };
+		2A4AE360281017310056D130 /* MacVirtualMachineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A4AE35F281017310056D130 /* MacVirtualMachineView.swift */; };
+		2A4AE362281018420056D130 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A4AE361281018420056D130 /* RootView.swift */; };
 		2AAE43C027EA9CFB005A8EE0 /* CannedMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AAE43BF27EA9CFB005A8EE0 /* CannedMacApp.swift */; };
-		2AAE43C227EA9CFB005A8EE0 /* CannedMacView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AAE43C127EA9CFB005A8EE0 /* CannedMacView.swift */; };
 		2AAE43C427EA9CFC005A8EE0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2AAE43C327EA9CFC005A8EE0 /* Assets.xcassets */; };
 		2AAE43C727EA9CFC005A8EE0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2AAE43C627EA9CFC005A8EE0 /* Preview Assets.xcassets */; };
 		2AAE43CF27EA9D35005A8EE0 /* DownloadInstallerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AAE43CE27EA9D35005A8EE0 /* DownloadInstallerView.swift */; };
@@ -17,21 +21,24 @@
 		2AAE43D527EAA947005A8EE0 /* UserError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AAE43D427EAA947005A8EE0 /* UserError.swift */; };
 		2AAE43D927EABEFD005A8EE0 /* InstallerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AAE43D827EABEFD005A8EE0 /* InstallerView.swift */; };
 		2AAE43DB27EADF5B005A8EE0 /* VirtualMachineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AAE43DA27EADF5B005A8EE0 /* VirtualMachineView.swift */; };
-		2AD7150E27EC316D00EDD14E /* CannedMacSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD7150D27EC316D00EDD14E /* CannedMacSettings.swift */; };
+		2AC6CD79281104BE00990CA3 /* MacVirtualMachineConfigurationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AC6CD78281104BE00990CA3 /* MacVirtualMachineConfigurationView.swift */; };
 		2AD7151227ECFF5B00EDD14E /* VirtualizationPrivate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD7151127ECFF5B00EDD14E /* VirtualizationPrivate.swift */; };
 		2AD7151827EDA70300EDD14E /* DisplayResolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD7151727EDA70300EDD14E /* DisplayResolution.swift */; };
 		2AD7151C27EDD53600EDD14E /* VirtualMachineOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD7151B27EDD53600EDD14E /* VirtualMachineOptions.swift */; };
 		2AD7152027EDF7C100EDD14E /* SerialPortType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD7151F27EDF7C100EDD14E /* SerialPortType.swift */; };
 		2AE72AF628091CB800CEA382 /* FoundationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE72AF528091CB800CEA382 /* FoundationExtensions.swift */; };
 		2AE72B55280B0F6900CEA382 /* SwiftTerm in Frameworks */ = {isa = PBXBuildFile; productRef = 2AE72B54280B0F6900CEA382 /* SwiftTerm */; };
-		2AE72B57280B108200CEA382 /* ConsoleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE72B56280B108200CEA382 /* ConsoleViewController.swift */; };
 		2AE72B59280C1DC300CEA382 /* VirtualMachineList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE72B58280C1DC300CEA382 /* VirtualMachineList.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2A1B6955281E862100DA9AE9 /* PlayButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayButtonView.swift; sourceTree = "<group>"; };
+		2A1B6957281E87AE00DA9AE9 /* MacVirtualMachineContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacVirtualMachineContainerView.swift; sourceTree = "<group>"; };
+		2A1D702B2827254D006F964A /* VirtualMachineListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualMachineListView.swift; sourceTree = "<group>"; };
+		2A4AE35F281017310056D130 /* MacVirtualMachineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacVirtualMachineView.swift; sourceTree = "<group>"; };
+		2A4AE361281018420056D130 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		2AAE43BC27EA9CFB005A8EE0 /* macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = macOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2AAE43BF27EA9CFB005A8EE0 /* CannedMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CannedMacApp.swift; sourceTree = "<group>"; };
-		2AAE43C127EA9CFB005A8EE0 /* CannedMacView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CannedMacView.swift; sourceTree = "<group>"; };
 		2AAE43C327EA9CFC005A8EE0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2AAE43C627EA9CFC005A8EE0 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2AAE43C827EA9CFC005A8EE0 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
@@ -41,13 +48,12 @@
 		2AAE43D427EAA947005A8EE0 /* UserError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserError.swift; sourceTree = "<group>"; };
 		2AAE43D827EABEFD005A8EE0 /* InstallerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerView.swift; sourceTree = "<group>"; };
 		2AAE43DA27EADF5B005A8EE0 /* VirtualMachineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualMachineView.swift; sourceTree = "<group>"; };
-		2AD7150D27EC316D00EDD14E /* CannedMacSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CannedMacSettings.swift; sourceTree = "<group>"; };
+		2AC6CD78281104BE00990CA3 /* MacVirtualMachineConfigurationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacVirtualMachineConfigurationView.swift; sourceTree = "<group>"; };
 		2AD7151127ECFF5B00EDD14E /* VirtualizationPrivate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualizationPrivate.swift; sourceTree = "<group>"; };
 		2AD7151727EDA70300EDD14E /* DisplayResolution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayResolution.swift; sourceTree = "<group>"; };
 		2AD7151B27EDD53600EDD14E /* VirtualMachineOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualMachineOptions.swift; sourceTree = "<group>"; };
 		2AD7151F27EDF7C100EDD14E /* SerialPortType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerialPortType.swift; sourceTree = "<group>"; };
 		2AE72AF528091CB800CEA382 /* FoundationExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationExtensions.swift; sourceTree = "<group>"; };
-		2AE72B56280B108200CEA382 /* ConsoleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleViewController.swift; sourceTree = "<group>"; };
 		2AE72B58280C1DC300CEA382 /* VirtualMachineList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualMachineList.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -85,18 +91,21 @@
 				2AAE43C827EA9CFC005A8EE0 /* macOS.entitlements */,
 				2AAE43D027EAA42C005A8EE0 /* CannedMac.swift */,
 				2AAE43BF27EA9CFB005A8EE0 /* CannedMacApp.swift */,
-				2AD7150D27EC316D00EDD14E /* CannedMacSettings.swift */,
-				2AAE43C127EA9CFB005A8EE0 /* CannedMacView.swift */,
-				2AE72B56280B108200CEA382 /* ConsoleViewController.swift */,
 				2AD7151727EDA70300EDD14E /* DisplayResolution.swift */,
 				2AAE43CE27EA9D35005A8EE0 /* DownloadInstallerView.swift */,
 				2AAE43D227EAA779005A8EE0 /* FileUtilities.swift */,
 				2AE72AF528091CB800CEA382 /* FoundationExtensions.swift */,
 				2AAE43D827EABEFD005A8EE0 /* InstallerView.swift */,
+				2AC6CD78281104BE00990CA3 /* MacVirtualMachineConfigurationView.swift */,
+				2A1B6957281E87AE00DA9AE9 /* MacVirtualMachineContainerView.swift */,
+				2A4AE35F281017310056D130 /* MacVirtualMachineView.swift */,
+				2A1B6955281E862100DA9AE9 /* PlayButtonView.swift */,
+				2A4AE361281018420056D130 /* RootView.swift */,
 				2AD7151F27EDF7C100EDD14E /* SerialPortType.swift */,
 				2AAE43D427EAA947005A8EE0 /* UserError.swift */,
 				2AD7151127ECFF5B00EDD14E /* VirtualizationPrivate.swift */,
 				2AE72B58280C1DC300CEA382 /* VirtualMachineList.swift */,
+				2A1D702B2827254D006F964A /* VirtualMachineListView.swift */,
 				2AD7151B27EDD53600EDD14E /* VirtualMachineOptions.swift */,
 				2AAE43DA27EADF5B005A8EE0 /* VirtualMachineView.swift */,
 				2AAE43C327EA9CFC005A8EE0 /* Assets.xcassets */,
@@ -193,18 +202,21 @@
 				2AAE43D127EAA42C005A8EE0 /* CannedMac.swift in Sources */,
 				2AAE43CF27EA9D35005A8EE0 /* DownloadInstallerView.swift in Sources */,
 				2AD7151827EDA70300EDD14E /* DisplayResolution.swift in Sources */,
-				2AAE43C227EA9CFB005A8EE0 /* CannedMacView.swift in Sources */,
 				2AAE43D327EAA779005A8EE0 /* FileUtilities.swift in Sources */,
+				2AC6CD79281104BE00990CA3 /* MacVirtualMachineConfigurationView.swift in Sources */,
 				2AAE43DB27EADF5B005A8EE0 /* VirtualMachineView.swift in Sources */,
 				2AD7151C27EDD53600EDD14E /* VirtualMachineOptions.swift in Sources */,
+				2A1B6958281E87AE00DA9AE9 /* MacVirtualMachineContainerView.swift in Sources */,
 				2AD7152027EDF7C100EDD14E /* SerialPortType.swift in Sources */,
 				2AD7151227ECFF5B00EDD14E /* VirtualizationPrivate.swift in Sources */,
 				2AAE43C027EA9CFB005A8EE0 /* CannedMacApp.swift in Sources */,
+				2A1D702C2827254D006F964A /* VirtualMachineListView.swift in Sources */,
+				2A1B6956281E862100DA9AE9 /* PlayButtonView.swift in Sources */,
 				2AE72B59280C1DC300CEA382 /* VirtualMachineList.swift in Sources */,
-				2AD7150E27EC316D00EDD14E /* CannedMacSettings.swift in Sources */,
 				2AAE43D527EAA947005A8EE0 /* UserError.swift in Sources */,
+				2A4AE362281018420056D130 /* RootView.swift in Sources */,
 				2AAE43D927EABEFD005A8EE0 /* InstallerView.swift in Sources */,
-				2AE72B57280B108200CEA382 /* ConsoleViewController.swift in Sources */,
+				2A4AE360281017310056D130 /* MacVirtualMachineView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

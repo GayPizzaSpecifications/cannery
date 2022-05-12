@@ -9,7 +9,7 @@ import Foundation
 
 class VirtualMachineList: ObservableObject {
     @Published
-    var virtualMachinesNames: [String] = []
+    var machines: [CannedMac] = []
 
     init() {
         do {
@@ -21,26 +21,32 @@ class VirtualMachineList: ObservableObject {
 
     private func loadCurrentVirtualMachines() throws {
         let virtualMachinesDirectory = try FileUtilities.getApplicationSupportDirectory()
-        let virtualMachineURLs = try FileManager.default.contentsOfDirectory(at: virtualMachinesDirectory, includingPropertiesForKeys: [.isDirectoryKey]).filter { url in
+        let virtualMachineURLs = try FileManager.default.contentsOfDirectory(
+            at: virtualMachinesDirectory,
+            includingPropertiesForKeys: [.isDirectoryKey]
+        ).filter { url in
             try url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory == true
         }
 
         let virtualMachinesNames = virtualMachineURLs.map { url in
             url.lastPathComponent
         }
-        self.virtualMachinesNames = virtualMachinesNames
+
+        for virtualMachineName in virtualMachinesNames {
+            machines.append(CannedMac(virtualMachineName: virtualMachineName))
+        }
     }
 
-    public func addVirtualMachine(_ name: String) throws {
+    public func addVirtualMachine(options: VirtualMachineOptions) throws {
         let virtualMachinesDirectory = try FileUtilities.getApplicationSupportDirectory()
-        let virtualMachineDirectory = virtualMachinesDirectory.appendingPathComponent(name)
+        let virtualMachineDirectory = virtualMachinesDirectory.appendingPathComponent(options.virtualMachineName)
 
         var isDirectory: ObjCBool = false
         if FileManager.default.fileExists(at: virtualMachineDirectory, isDirectory: &isDirectory),
-           isDirectory.boolValue {
-            throw UserError(.VirtualMachineExists, "Virtual Machine '\(name)' already exists.")
+           isDirectory.boolValue
+        {
+            throw UserError(.VirtualMachineExists, "Virtual Machine '\(options.virtualMachineName)' already exists.")
         }
-        try FileManager.default.createDirectory(at: virtualMachineDirectory, withIntermediateDirectories: true)
-        try loadCurrentVirtualMachines()
+        machines.append(CannedMac(virtualMachineName: options.virtualMachineName, options: options))
     }
 }

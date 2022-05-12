@@ -33,9 +33,9 @@ struct DisplayResolution: Codable, RawRepresentable, Hashable {
             pixelsPerInch = DisplayResolution.r3840_2160.pixelsPerInch
         } else if rawValue == 100 {
             self.rawValue = rawValue
-            width = 0
-            height = 0
-            pixelsPerInch = 0
+            width = DisplayResolution.automatic.width
+            height = DisplayResolution.automatic.height
+            pixelsPerInch = DisplayResolution.automatic.pixelsPerInch
         } else {
             return nil
         }
@@ -45,7 +45,7 @@ struct DisplayResolution: Codable, RawRepresentable, Hashable {
 
     static let r1920_1080 = DisplayResolution(rawValue: 1, width: 1920, height: 1080, pixelsPerInch: 80)
     static let r3840_2160 = DisplayResolution(rawValue: 2, width: 3840, height: 2160, pixelsPerInch: 157)
-    static let automatic = DisplayResolution(rawValue: 100, width: 0, height: 0, pixelsPerInch: 0)
+    static let automatic = DisplayResolution(rawValue: 100, width: 1920, height: 1080, pixelsPerInch: 80)
 
     var isAutomatic: Bool { width == 0 && height == 0 && pixelsPerInch == 0 }
 

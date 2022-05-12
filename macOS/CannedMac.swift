@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 import Virtualization
 
-class CannedMac: ObservableObject {
+class CannedMac: ObservableObject, Identifiable {
     static let defaultVirtualMachineName = "macOS"
 
     @Published
@@ -31,18 +31,11 @@ class CannedMac: ObservableObject {
     @Published
     var currentVmState: VZVirtualMachine.State = .stopped
 
-    @Published
-    var isResetRequested: Bool = false
-
-    @Published
-    var isSwitchMachine: Bool = false
-
-    @Published
-    var isCreateMachine: Bool = false
-
     var downloadProgressObserver: NSKeyValueObservation?
     var installProgressObserver: NSKeyValueObservation?
     var currentStateObserver: NSKeyValueObservation?
+
+    var downloadTask: URLSessionDownloadTask?
 
     #if CANNED_MAC_USE_PRIVATE_APIS
     var vmVncServer: _VZVNCServer?
@@ -50,40 +43,24 @@ class CannedMac: ObservableObject {
 
     var virtualMachineName: String
 
+    var id: String { virtualMachineName }
+
     private let serialReadPipe = Pipe()
     private let serialWritePipe = Pipe()
 
-    private lazy var consoleWindow: NSWindow = {
-        let viewController = ConsoleViewController()
-        viewController.configure(with: serialReadPipe, writePipe: serialWritePipe)
-        return NSWindow(contentViewController: viewController)
-    }()
+    var options: VirtualMachineOptions
 
-    private lazy var consoleWindowController: NSWindowController = {
-        let windowController = NSWindowController(window: consoleWindow)
-        return windowController
-    }()
-
-    init(virtualMachineName: String = defaultVirtualMachineName) {
+    init(virtualMachineName: String = defaultVirtualMachineName, options: VirtualMachineOptions? = nil) {
         self.virtualMachineName = virtualMachineName
         do {
-            try migrateOldDirectoryIfNecessary()
+            let virtualMachineDirectory = try CannedMac.getVirtualMachineDirectory(name: virtualMachineName)
+            self.options = try CannedMac.loadOrCreateOptions(virtualMachineDirectory: virtualMachineDirectory, options: options)
         } catch {
-            fatalError("Failed to migrate old virtual machine format: \(error.localizedDescription)")
+            fatalError(error.localizedDescription)
         }
     }
 
-    func swapMachineName(name: String) {
-        isSwitchMachine = false
-        if virtualMachineName == name {
-            return
-        }
-        UserDefaults.standard.set(name, forKey: "virtualMachineName")
-        vm = nil
-        virtualMachineName = name
-    }
-
-    func createVmConfiguration(_ options: VirtualMachineOptions, displaySize: CGSize?) async throws -> (VZVirtualMachineConfiguration, VZMacOSRestoreImage?) {
+    func createVmConfiguration() async throws -> (VZVirtualMachineConfiguration, VZMacOSRestoreImage?) {
         let existingHardwareModel = try loadMacHardwareModel()
 
         let model: VZMacHardwareModel
@@ -105,7 +82,7 @@ class CannedMac: ObservableObject {
 
         let configuration = VZVirtualMachineConfiguration()
         configuration.cpuCount = computeCpuCount()
-        configuration.memorySize = computeMemorySize(options.memoryInGigabytes)
+        configuration.memorySize = computeMemorySize(Int(options.memoryInGigabytes))
 
         let platform = VZMacPlatformConfiguration()
         platform.machineIdentifier = try loadOrCreateMachineIdentifier()
@@ -157,18 +134,9 @@ class CannedMac: ObservableObject {
 
         let resolution = options.displayResolution
 
-        let widthInPixels: Int
-        let heightInPixels: Int
-        let pixelsPerInch: Int
-        if let displaySize = displaySize {
-            widthInPixels = Int(displaySize.width)
-            heightInPixels = Int(displaySize.height)
-            pixelsPerInch = 80
-        } else {
-            widthInPixels = resolution.width
-            heightInPixels = resolution.height
-            pixelsPerInch = 80
-        }
+        let widthInPixels = resolution.width
+        let heightInPixels = resolution.height
+        let pixelsPerInch = resolution.pixelsPerInch
 
         let display = VZMacGraphicsDisplayConfiguration(
             widthInPixels: widthInPixels,
@@ -195,7 +163,6 @@ class CannedMac: ObservableObject {
                 fileHandleForWriting: serialReadPipe.fileHandleForWriting
             )
             configuration.serialPorts.append(serialPort)
-            showSerialConsole()
         }
 
         try configuration.validate()
@@ -203,8 +170,7 @@ class CannedMac: ObservableObject {
     }
 
     @MainActor
-    func bootVirtualMachine(_ options: VirtualMachineOptions, currentViewSize: CGSize) async throws {
-        (consoleWindow.contentViewController as! ConsoleViewController).clearConsoleView()
+    func bootVirtualMachine() async throws {
         #if CANNED_MAC_USE_PRIVATE_APIS
         if vmVncServer != nil {
             vmVncServer!.stop()
@@ -212,8 +178,7 @@ class CannedMac: ObservableObject {
         }
         #endif
 
-        let currentViewSizeAutomatic = options.displayResolution.isAutomatic ? currentViewSize : nil
-        let (configuration, macRestoreImage) = try await createVmConfiguration(options, displaySize: currentViewSizeAutomatic)
+        let (configuration, macRestoreImage) = try await createVmConfiguration()
         let vm = VZVirtualMachine(configuration: configuration, queue: DispatchQueue.main)
 
         if let macRestoreImage = macRestoreImage {
@@ -276,7 +241,6 @@ class CannedMac: ObservableObject {
         }
 
         try deleteVirtualMachineDirectory()
-        isResetRequested = false
     }
 
     func loadMacHardwareModel() throws -> VZMacHardwareModel? {
@@ -298,9 +262,15 @@ class CannedMac: ObservableObject {
 
     func downloadLatestSupportImage() async throws -> VZMacOSRestoreImage {
         let virtualMachineDirectory = try getVirtualMachineDirectory()
-        let restoreIpswFileUrl = virtualMachineDirectory.appendingPathComponent("restore.ipsw")
-        if FileManager.default.fileExists(at: restoreIpswFileUrl) {
-            return try await VZMacOSRestoreImage.image(from: restoreIpswFileUrl)
+        let standardRestoreIpswFileUrl = virtualMachineDirectory.appendingPathComponent("restore.ipsw")
+
+        var restoreIpswUrl: URL = standardRestoreIpswFileUrl
+        if let restoreIpswPath = options.restoreIpswPath {
+            restoreIpswUrl = URL(fileURLWithPath: restoreIpswPath, relativeTo: virtualMachineDirectory)
+        }
+
+        if FileManager.default.fileExists(at: restoreIpswUrl) {
+            return try await VZMacOSRestoreImage.image(from: restoreIpswUrl)
         }
 
         state = .downloadInstaller
@@ -314,6 +284,7 @@ class CannedMac: ObservableObject {
                 }
                 promise(.success(url))
             }
+            self.downloadTask = task
 
             self.downloadProgressObserver = task.progress.observe(\.fractionCompleted, options: [.initial, .new]) { _, change in
                 if let value = change.newValue {
@@ -335,9 +306,14 @@ class CannedMac: ObservableObject {
             throw UserError(.DownloadFailed, "Download of installer failed.")
         }
 
-        try FileManager.default.moveItem(at: temporaryFileUrl, to: restoreIpswFileUrl)
+        try FileManager.default.moveItem(at: temporaryFileUrl, to: standardRestoreIpswFileUrl)
 
-        return try await VZMacOSRestoreImage.image(from: restoreIpswFileUrl)
+        return try await VZMacOSRestoreImage.image(from: standardRestoreIpswFileUrl)
+    }
+
+    func cancelInstallerDownload() {
+        downloadTask?.cancel()
+        state = .unknown
     }
 
     func loadOrCreateAuxilaryStorage(_ model: VZMacHardwareModel) throws -> VZMacAuxiliaryStorage {
@@ -382,6 +358,18 @@ class CannedMac: ObservableObject {
         }
     }
 
+    static func loadOrCreateOptions(virtualMachineDirectory: URL, options defaultOptions: VirtualMachineOptions? = nil) throws -> VirtualMachineOptions {
+        let optionsFileUrl = virtualMachineDirectory.appendingPathComponent("options.plist")
+        let options: VirtualMachineOptions
+        if FileManager.default.fileExists(at: optionsFileUrl) {
+            options = try PropertyListDecoder().decode(VirtualMachineOptions.self, from: try Data(contentsOf: optionsFileUrl))
+        } else {
+            options = defaultOptions ?? VirtualMachineOptions(virtualMachineName: virtualMachineDirectory.lastPathComponent)
+        }
+        try options.saveTo(url: optionsFileUrl)
+        return options
+    }
+
     func getOrCreateDiskImage() throws -> VZDiskImageStorageDeviceAttachment {
         let virtualMachineDirectory = try getVirtualMachineDirectory()
         let diskImageUrl = virtualMachineDirectory.appendingPathComponent("disk.img")
@@ -419,12 +407,20 @@ class CannedMac: ObservableObject {
     func deleteVirtualMachineDirectory() throws {
         let virtualMachineDirectory = try getVirtualMachineDirectory()
         try FileManager.default.trashItem(at: virtualMachineDirectory, resultingItemURL: nil)
-        _ = try getVirtualMachineDirectory()
     }
 
     func getVirtualMachineDirectory(createIfNotExists: Bool = true) throws -> URL {
         let applicationSupportDirectoryUrl = try FileUtilities.getApplicationSupportDirectory()
         let virtualMachineDirectory = applicationSupportDirectoryUrl.appendingPathComponent(virtualMachineName)
+        if createIfNotExists {
+            try FileManager.default.createDirectory(at: virtualMachineDirectory, withIntermediateDirectories: true)
+        }
+        return virtualMachineDirectory
+    }
+
+    static func getVirtualMachineDirectory(name: String, createIfNotExists: Bool = true) throws -> URL {
+        let applicationSupportDirectoryUrl = try FileUtilities.getApplicationSupportDirectory()
+        let virtualMachineDirectory = applicationSupportDirectoryUrl.appendingPathComponent(name)
         if createIfNotExists {
             try FileManager.default.createDirectory(at: virtualMachineDirectory, withIntermediateDirectories: true)
         }
@@ -440,7 +436,8 @@ class CannedMac: ObservableObject {
 
         var isDirectory: ObjCBool = false
         if !FileManager.default.fileExists(at: legacyMachineDirectory, isDirectory: &isDirectory),
-           !isDirectory.boolValue {
+           !isDirectory.boolValue
+        {
             return
         }
 
@@ -449,15 +446,32 @@ class CannedMac: ObservableObject {
     }
 
     func setCurrentError(_ error: Error) {
-        state = .error
-        self.error = error
+        DispatchQueue.main.async {
+            self.state = .error
+            self.error = error
+        }
     }
 
-    func showSerialConsole() {
-        if !consoleWindow.isVisible {
-            consoleWindow.setContentSize(NSSize(width: 640, height: 480))
-            consoleWindow.title = "Serial Console"
-            consoleWindowController.showWindow(nil)
+    func stateToString(_ state: VZVirtualMachine.State) -> String {
+        switch state {
+        case .stopped:
+            return "stopped"
+        case .running:
+            return "running"
+        case .paused:
+            return "paused"
+        case .error:
+            return "error"
+        case .starting:
+            return "starting"
+        case .pausing:
+            return "pausing"
+        case .resuming:
+            return "resuming"
+        case .stopping:
+            return "stopping"
+        @unknown default:
+            return "unknown"
         }
     }
 }
