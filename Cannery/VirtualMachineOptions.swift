@@ -13,17 +13,18 @@ struct VirtualMachineOptions: Codable {
     var memoryInGigabytes: Float64 = 4
     var displayResolution: DisplayResolution = .r1920_1080
 
+    var bootToRecovery: Bool? = false
+    var macInputMode: Bool? = true
+    
     #if CANNED_MAC_USE_PRIVATE_APIS
-    var bootToRecovery: Bool = false
-    var bootToDfuMode: Bool = false
-    var stopInIBootStage1: Bool = false
-    var stopInIBootStage2: Bool = false
-    var gdbDebugStub: Bool = false
-    var macInputMode: Bool = false
-    var vncServerEnabled: Bool = false
-    var vncServerPort: Int = 5905
-    var vncServerAuthenticationEnabled: Bool = false
-    var vncServerPassword: String = "hunter2"
+    var bootToDfuMode: Bool? = false
+    var stopInIBootStage1: Bool? = false
+    var stopInIBootStage2: Bool? = false
+    var gdbDebugStub: Bool? = false
+    var vncServerEnabled: Bool? = false
+    var vncServerPort: Int? = 5905
+    var vncServerAuthenticationEnabled: Bool? = false
+    var vncServerPassword: String? = "hunter2"
     #endif
 
     var serialPortOutputEnabled: Bool = false

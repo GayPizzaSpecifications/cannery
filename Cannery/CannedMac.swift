@@ -108,24 +108,14 @@ class CannedMac: ObservableObject, Identifiable {
         network.attachment = VZNATNetworkDeviceAttachment()
         configuration.networkDevices.append(network)
 
-        func configureDefaultInputDevices() {
-            let keyboard = VZUSBKeyboardConfiguration()
-            configuration.keyboards.append(keyboard)
+        let keyboard = VZUSBKeyboardConfiguration()
+        configuration.keyboards.append(keyboard)
 
-            let pointingDevice = VZUSBScreenCoordinatePointingDeviceConfiguration()
-            configuration.pointingDevices.append(pointingDevice)
+        var pointingDevice: VZPointingDeviceConfiguration = VZUSBScreenCoordinatePointingDeviceConfiguration()
+        if options.macInputMode ?? true {
+            pointingDevice = VZMacTrackpadConfiguration()
         }
-
-        #if CANNED_MAC_USE_PRIVATE_APIS
-        if options.macInputMode {
-            configuration.keyboards.append(VZPrivateUtilities.createMacKeyboardConfiguration())
-            configuration.pointingDevices.append(VZPrivateUtilities.createMacTrackpadConfiguration())
-        } else {
-            configureDefaultInputDevices()
-        }
-        #else
-        configureDefaultInputDevices()
-        #endif
+        configuration.pointingDevices.append(pointingDevice)
 
         let memoryBalloon = VZVirtioTraditionalMemoryBalloonDeviceConfiguration()
         configuration.memoryBalloonDevices.append(memoryBalloon)
@@ -150,7 +140,7 @@ class CannedMac: ObservableObject, Identifiable {
         configuration.entropyDevices.append(entropy)
 
         #if CANNED_MAC_USE_PRIVATE_APIS
-        if options.gdbDebugStub {
+        if options.gdbDebugStub ?? false {
             let stub = VZPrivateUtilities.createGdbDebugStub(1)
             configuration.setGdbDebugStub(stub)
         }
@@ -211,25 +201,20 @@ class CannedMac: ObservableObject, Identifiable {
         }
 
         #if CANNED_MAC_USE_PRIVATE_APIS
-        if options.vncServerEnabled {
-            let vncServerPassword = options.vncServerAuthenticationEnabled ? options.vncServerPassword : nil
-            let server = VZPrivateUtilities.createVncServer(port: options.vncServerPort, queue: DispatchQueue.main, password: vncServerPassword)
+        if options.vncServerEnabled ?? false {
+            let vncServerPassword = (options.vncServerAuthenticationEnabled ?? false) ? options.vncServerPassword : nil
+            let server = VZPrivateUtilities.createVncServer(port: options.vncServerPort ?? 5905, queue: DispatchQueue.main, password: vncServerPassword)
             server.virtualMachine = vm
             server.start()
             vmVncServer = server
         } else {
             vmVncServer = nil
         }
-
-        let startOptions = VZExtendedVirtualMachineStartOptions()
-        startOptions.bootMacOSRecovery = options.bootToRecovery
-        startOptions.forceDFU = options.bootToDfuMode
-        startOptions.stopInIBootStage1 = options.stopInIBootStage1
-        startOptions.stopInIBootStage2 = options.stopInIBootStage2
-        try await vm.extendedStart(with: startOptions)
-        #else
-        try await vm.start()
         #endif
+        
+        let startOptions = VZMacOSVirtualMachineStartOptions()
+        startOptions.startUpFromMacOSRecovery = options.bootToRecovery ?? false
+        try await vm.start(options: startOptions)
     }
 
     @MainActor
@@ -369,6 +354,12 @@ class CannedMac: ObservableObject, Identifiable {
         try options.saveTo(url: optionsFileUrl)
         return options
     }
+    
+    func saveCurrentOptions() throws {
+        let virtualMachineDirectory = try getVirtualMachineDirectory()
+        let optionsFileUrl = virtualMachineDirectory.appendingPathComponent("options.plist")
+        try options.saveTo(url: optionsFileUrl)
+    }
 
     func getOrCreateDiskImage() throws -> VZDiskImageStorageDeviceAttachment {
         let virtualMachineDirectory = try getVirtualMachineDirectory()
@@ -408,7 +399,7 @@ class CannedMac: ObservableObject, Identifiable {
         let virtualMachineDirectory = try getVirtualMachineDirectory()
         try FileManager.default.trashItem(at: virtualMachineDirectory, resultingItemURL: nil)
     }
-
+    
     func getVirtualMachineDirectory(createIfNotExists: Bool = true) throws -> URL {
         let applicationSupportDirectoryUrl = try FileUtilities.getApplicationSupportDirectory()
         let virtualMachineDirectory = applicationSupportDirectoryUrl.appendingPathComponent(virtualMachineName)

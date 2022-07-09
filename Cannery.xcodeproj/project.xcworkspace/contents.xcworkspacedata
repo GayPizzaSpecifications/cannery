@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:">
+      location = "self:/Users/kendfinger/Developer/Personal/Cannery/Cannery.xcodeproj">
    </FileRef>
 </Workspace>

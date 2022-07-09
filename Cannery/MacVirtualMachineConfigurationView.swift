@@ -22,10 +22,10 @@ struct MacVirtualMachineConfigurationView: View {
     @State
     var virtualMachineDisplayResolution: DisplayResolution
 
-    #if CANNED_MAC_USE_PRIVATE_APIS
     @State
     var virtualMachineBootRecovery: Bool
-
+    
+    #if CANNED_MAC_USE_PRIVATE_APIS
     @State
     var virtualMachineBootDfu: Bool
 
@@ -49,10 +49,10 @@ struct MacVirtualMachineConfigurationView: View {
 
     @State
     var virtualMachineVncServerPassword: String
-
+    #endif
+    
     @State
     var virtualMachineEnableMacInput: Bool
-    #endif
 
     @State
     var virtualMachineEnableSerialPortOutput: Bool
@@ -71,20 +71,21 @@ struct MacVirtualMachineConfigurationView: View {
         virtualMachineMemoryGigabytes = options.memoryInGigabytes
         virtualMachineDisplayResolution = options.displayResolution
         #if CANNED_MAC_USE_PRIVATE_APIS
-        virtualMachineBootRecovery = options.bootToRecovery
-        virtualMachineBootDfu = options.bootToDfuMode
-        virtualMachineBootStopInIBootStage1 = options.stopInIBootStage1
-        virtualMachineBootStopInIBootStage2 = options.stopInIBootStage2
-        virtualMachineEnableDebugStub = options.gdbDebugStub
-        virtualMachineEnableVncServer = options.vncServerEnabled
-        virtualMachineEnableVncServerAuthentication = options.vncServerAuthenticationEnabled
-        virtualMachineVncServerPort = options.vncServerPort
-        virtualMachineVncServerPassword = options.vncServerPassword
-        virtualMachineEnableMacInput = options.macInputMode
+        virtualMachineBootRecovery = options.bootToRecovery ?? false
+        virtualMachineBootDfu = options.bootToDfuMode ?? false
+        virtualMachineBootStopInIBootStage1 = options.stopInIBootStage1 ?? false
+        virtualMachineBootStopInIBootStage2 = options.stopInIBootStage2 ?? false
+        virtualMachineEnableDebugStub = options.gdbDebugStub ?? false
+        virtualMachineEnableVncServer = options.vncServerEnabled ?? false
+        virtualMachineEnableVncServerAuthentication = options.vncServerAuthenticationEnabled ?? false
+        virtualMachineVncServerPort = options.vncServerPort ?? 5905
+        virtualMachineVncServerPassword = options.vncServerPassword ?? "hunter2"
         #endif
-
+        virtualMachineEnableMacInput = options.macInputMode ?? true
+        
         virtualMachineEnableSerialPortOutput = options.serialPortOutputEnabled
         virtualMachineSerialPortOutputType = options.serialPortOutputType
+        virtualMachineBootRecovery = options.bootToRecovery ?? false
     }
 
     var body: some View {
@@ -105,8 +106,8 @@ struct MacVirtualMachineConfigurationView: View {
             }
 
             Section(header: Text("Boot")) {
-                #if CANNED_MAC_USE_PRIVATE_APIS
                 Toggle("Force Recovery Mode", isOn: $virtualMachineBootRecovery)
+                #if CANNED_MAC_USE_PRIVATE_APIS
                 Toggle("Force DFU Mode", isOn: $virtualMachineBootDfu)
                 Toggle("Stop in iBoot Stage 1", isOn: $virtualMachineBootStopInIBootStage1)
                 Toggle("Stop in iBoot Stage 2", isOn: $virtualMachineBootStopInIBootStage2)
@@ -145,8 +146,8 @@ struct MacVirtualMachineConfigurationView: View {
                     }
                 }
 
-                #if CANNED_MAC_USE_PRIVATE_APIS
                 Toggle("Mac Input", isOn: $virtualMachineEnableMacInput)
+                #if CANNED_MAC_USE_PRIVATE_APIS
                 Toggle("Debug Stub", isOn: $virtualMachineEnableDebugStub)
                 #endif
 
@@ -174,7 +175,7 @@ struct MacVirtualMachineConfigurationView: View {
                 }
             }
         }
-        .frame(minWidth: 1000, minHeight: 800)
+        .frame(minWidth: 800, minHeight: 600)
         .padding()
     }
 
@@ -182,8 +183,8 @@ struct MacVirtualMachineConfigurationView: View {
         var options = VirtualMachineOptions(virtualMachineName: virtualMachineName)
         options.memoryInGigabytes = virtualMachineMemoryGigabytes
         options.displayResolution = virtualMachineDisplayResolution
-        #if CANNED_MAC_USE_PRIVATE_APIS
         options.bootToRecovery = virtualMachineBootRecovery
+        #if CANNED_MAC_USE_PRIVATE_APIS
         options.bootToDfuMode = virtualMachineBootDfu
         options.stopInIBootStage1 = virtualMachineBootStopInIBootStage1
         options.stopInIBootStage2 = virtualMachineBootStopInIBootStage2
@@ -192,8 +193,8 @@ struct MacVirtualMachineConfigurationView: View {
         options.vncServerPort = virtualMachineVncServerPort
         options.vncServerAuthenticationEnabled = virtualMachineEnableVncServerAuthentication
         options.vncServerPassword = virtualMachineVncServerPassword
-        options.macInputMode = virtualMachineEnableMacInput
         #endif
+        options.macInputMode = virtualMachineEnableMacInput
         options.serialPortOutputEnabled = virtualMachineEnableSerialPortOutput
         options.serialPortOutputType = virtualMachineSerialPortOutputType
         options.restoreIpswPath = customIpswPath
