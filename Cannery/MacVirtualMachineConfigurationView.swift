@@ -68,6 +68,7 @@ struct MacVirtualMachineConfigurationView: View {
         self.saveAction = saveAction
         self.cancelAction = cancelAction
 
+        virtualMachineName = options.virtualMachineName
         virtualMachineMemoryGigabytes = options.memoryInGigabytes
         virtualMachineDisplayResolution = options.displayResolution
         #if CANNED_MAC_USE_PRIVATE_APIS

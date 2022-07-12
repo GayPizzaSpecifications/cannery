@@ -14,9 +14,9 @@ struct VirtualMachineListView: View {
     @State
     var isEditMachineShown = false
     
-    @State
-    var machineUnderEdit: CannedMac? = nil
-    
+    @ObservedObject
+    private var machineEditState: EditState = EditState()
+
     var body: some View {
         ForEach(virtualMachineList.machines, id: \.virtualMachineName) { mac in
             NavigationLink {
@@ -26,7 +26,7 @@ struct VirtualMachineListView: View {
                 Label(mac.virtualMachineName, systemImage: "desktopcomputer")
             }
             .sheet(isPresented: $isEditMachineShown) {
-                if let machineUnderEdit {
+                if let machineUnderEdit = machineEditState.machineUnderEdit {
                     MacVirtualMachineConfigurationView(
                         actionButtonName: "Save",
                         options: machineUnderEdit.options,
@@ -37,7 +37,7 @@ struct VirtualMachineListView: View {
                             } catch {
                                 fatalError(error.localizedDescription)
                             }
-                            self.machineUnderEdit = nil
+                            machineEditState.machineUnderEdit = nil
                             isEditMachineShown = false
                         },
                         cancelAction: {
@@ -57,10 +57,14 @@ struct VirtualMachineListView: View {
                 }
                 
                 Button("Edit Virtual Machine") {
-                    machineUnderEdit = mac
+                    machineEditState.machineUnderEdit = mac
                     isEditMachineShown = true
                 }
             }
         }
+    }
+    
+    private class EditState: ObservableObject {
+        var machineUnderEdit: CannedMac? = nil
     }
 }
