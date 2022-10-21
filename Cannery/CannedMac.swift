@@ -2,7 +2,7 @@
 //  CannedMac.swift
 //  macOS
 //
-//  Created by Kenneth Endfinger on 3/22/22.
+//  Created by Alex Zenla on 3/22/22.
 //
 
 import Combine
@@ -258,7 +258,9 @@ class CannedMac: ObservableObject, Identifiable {
             return try await VZMacOSRestoreImage.image(from: restoreIpswUrl)
         }
 
-        state = .downloadInstaller
+        DispatchQueue.main.async {
+            self.state = .downloadInstaller
+        }
 
         let image = try await VZMacOSRestoreImage.latestSupported
         let future: Future<URL?, Error> = Future { promise in

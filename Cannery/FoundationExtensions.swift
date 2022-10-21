@@ -2,7 +2,7 @@
 //  FoundationExtensions.swift
 //  macOS
 //
-//  Created by Kenneth Endfinger on 4/14/22.
+//  Created by Alex Zenla on 4/14/22.
 //
 
 import Foundation

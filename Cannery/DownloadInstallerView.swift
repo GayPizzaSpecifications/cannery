@@ -2,7 +2,7 @@
 //  DownloadInstallerView.swift
 //  macOS
 //
-//  Created by Kenneth Endfinger on 3/22/22.
+//  Created by Alex Zenla on 3/22/22.
 //
 
 import Foundation

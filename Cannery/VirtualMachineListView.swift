@@ -2,7 +2,7 @@
 //  VirtualMachineListView.swift
 //  macOS
 //
-//  Created by Kenneth Endfinger on 5/7/22.
+//  Created by Alex Zenla on 5/7/22.
 //
 
 import Foundation

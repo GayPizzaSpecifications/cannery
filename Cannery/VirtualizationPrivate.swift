@@ -2,7 +2,7 @@
 //  VirtualizationPrivate.swift
 //  macOS
 //
-//  Created by Kenneth Endfinger on 3/24/22.
+//  Created by Alex Zenla on 3/24/22.
 //
 
 #if CANNED_MAC_USE_PRIVATE_APIS
