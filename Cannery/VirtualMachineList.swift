@@ -43,8 +43,7 @@ class VirtualMachineList: ObservableObject {
 
         var isDirectory: ObjCBool = false
         if FileManager.default.fileExists(at: virtualMachineDirectory, isDirectory: &isDirectory),
-           isDirectory.boolValue
-        {
+           isDirectory.boolValue {
             throw UserError(.VirtualMachineExists, "Virtual Machine '\(options.virtualMachineName)' already exists.")
         }
         machines.append(CannedMac(virtualMachineName: options.virtualMachineName, options: options))

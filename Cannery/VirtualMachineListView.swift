@@ -10,12 +10,12 @@ import SwiftUI
 
 struct VirtualMachineListView: View {
     @ObservedObject var virtualMachineList: VirtualMachineList
-    
+
     @State
     var isEditMachineShown = false
-    
+
     @ObservedObject
-    private var machineEditState: EditState = EditState()
+    private var machineEditState: EditState = .init()
 
     var body: some View {
         ForEach(virtualMachineList.machines, id: \.virtualMachineName) { mac in
@@ -55,7 +55,7 @@ struct VirtualMachineListView: View {
                         virtualMachineList.machines.removeAll { $0.virtualMachineName == mac.virtualMachineName }
                     }
                 }
-                
+
                 Button("Edit Virtual Machine") {
                     machineEditState.machineUnderEdit = mac
                     isEditMachineShown = true
@@ -63,8 +63,8 @@ struct VirtualMachineListView: View {
             }
         }
     }
-    
+
     private class EditState: ObservableObject {
-        var machineUnderEdit: CannedMac? = nil
+        var machineUnderEdit: CannedMac?
     }
 }

@@ -15,7 +15,7 @@ struct VirtualMachineOptions: Codable {
 
     var bootToRecovery: Bool? = false
     var macInputMode: Bool? = true
-    
+
     #if CANNED_MAC_USE_PRIVATE_APIS
     var bootToDfuMode: Bool? = false
     var stopInIBootStage1: Bool? = false
@@ -30,7 +30,7 @@ struct VirtualMachineOptions: Codable {
     var serialPortOutputEnabled: Bool = false
     var serialPortOutputType: SerialPortType = .virtio
 
-    var restoreIpswPath: String? = nil
+    var restoreIpswPath: String?
 
     func saveTo(url: URL) throws {
         let encoded = try PropertyListEncoder().encode(self)

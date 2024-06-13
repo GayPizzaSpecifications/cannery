@@ -171,7 +171,7 @@ class CannedMac: ObservableObject, Identifiable {
         let (configuration, macRestoreImage) = try await createVmConfiguration()
         let vm = VZVirtualMachine(configuration: configuration, queue: DispatchQueue.main)
 
-        if let macRestoreImage = macRestoreImage {
+        if let macRestoreImage {
             let installer = VZMacOSInstaller(virtualMachine: vm, restoringFromImageAt: macRestoreImage.url)
             installProgressObserver = installer.progress.observe(\.fractionCompleted, options: [.initial, .new]) { _, change in
                 DispatchQueue.main.async {
@@ -211,7 +211,7 @@ class CannedMac: ObservableObject, Identifiable {
             vmVncServer = nil
         }
         #endif
-        
+
         let startOptions = VZMacOSVirtualMachineStartOptions()
         startOptions.startUpFromMacOSRecovery = options.bootToRecovery ?? false
         try await vm.start(options: startOptions)
@@ -219,7 +219,7 @@ class CannedMac: ObservableObject, Identifiable {
 
     @MainActor
     func deleteVirtualMachine() async throws {
-        if let vm = vm {
+        if let vm {
             if vm.state != .stopped {
                 try await vm.stop()
             }
@@ -265,7 +265,7 @@ class CannedMac: ObservableObject, Identifiable {
         let image = try await VZMacOSRestoreImage.latestSupported
         let future: Future<URL?, Error> = Future { promise in
             let task = URLSession.shared.downloadTask(with: image.url) { url, _, error in
-                if let error = error {
+                if let error {
                     promise(.failure(error))
                     return
                 }
@@ -289,7 +289,7 @@ class CannedMac: ObservableObject, Identifiable {
 
         let temporaryFileUrl = try await future.value
 
-        guard let temporaryFileUrl = temporaryFileUrl else {
+        guard let temporaryFileUrl else {
             throw UserError(.DownloadFailed, "Download of installer failed.")
         }
 
@@ -347,16 +347,15 @@ class CannedMac: ObservableObject, Identifiable {
 
     static func loadOrCreateOptions(virtualMachineDirectory: URL, options defaultOptions: VirtualMachineOptions? = nil) throws -> VirtualMachineOptions {
         let optionsFileUrl = virtualMachineDirectory.appendingPathComponent("options.plist")
-        let options: VirtualMachineOptions
-        if FileManager.default.fileExists(at: optionsFileUrl) {
-            options = try PropertyListDecoder().decode(VirtualMachineOptions.self, from: try Data(contentsOf: optionsFileUrl))
+        let options: VirtualMachineOptions = if FileManager.default.fileExists(at: optionsFileUrl) {
+            try PropertyListDecoder().decode(VirtualMachineOptions.self, from: Data(contentsOf: optionsFileUrl))
         } else {
-            options = defaultOptions ?? VirtualMachineOptions(virtualMachineName: virtualMachineDirectory.lastPathComponent)
+            defaultOptions ?? VirtualMachineOptions(virtualMachineName: virtualMachineDirectory.lastPathComponent)
         }
         try options.saveTo(url: optionsFileUrl)
         return options
     }
-    
+
     func saveCurrentOptions() throws {
         let virtualMachineDirectory = try getVirtualMachineDirectory()
         let optionsFileUrl = virtualMachineDirectory.appendingPathComponent("options.plist")
@@ -401,7 +400,7 @@ class CannedMac: ObservableObject, Identifiable {
         let virtualMachineDirectory = try getVirtualMachineDirectory()
         try FileManager.default.trashItem(at: virtualMachineDirectory, resultingItemURL: nil)
     }
-    
+
     func getVirtualMachineDirectory(createIfNotExists: Bool = true) throws -> URL {
         let applicationSupportDirectoryUrl = try FileUtilities.getApplicationSupportDirectory()
         let virtualMachineDirectory = applicationSupportDirectoryUrl.appendingPathComponent(virtualMachineName)
@@ -429,8 +428,7 @@ class CannedMac: ObservableObject, Identifiable {
 
         var isDirectory: ObjCBool = false
         if !FileManager.default.fileExists(at: legacyMachineDirectory, isDirectory: &isDirectory),
-           !isDirectory.boolValue
-        {
+           !isDirectory.boolValue {
             return
         }
 
@@ -463,6 +461,10 @@ class CannedMac: ObservableObject, Identifiable {
             return "resuming"
         case .stopping:
             return "stopping"
+        case .saving:
+            return "saving"
+        case .restoring:
+            return "restoring"
         @unknown default:
             return "unknown"
         }

@@ -355,9 +355,10 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				OTHER_SWIFT_FLAGS = "-D CANNED_MAC_USE_PRIVATE_APIS";
-				PRODUCT_BUNDLE_IDENTIFIER = io.kexec.Cannery;
+				PRODUCT_BUNDLE_IDENTIFIER = gay.pizza.Cannery;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -385,9 +386,10 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				OTHER_SWIFT_FLAGS = "-D CANNED_MAC_USE_PRIVATE_APIS";
-				PRODUCT_BUNDLE_IDENTIFIER = io.kexec.Cannery;
+				PRODUCT_BUNDLE_IDENTIFIER = gay.pizza.Cannery;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

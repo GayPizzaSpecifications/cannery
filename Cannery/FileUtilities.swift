@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct FileUtilities {
+enum FileUtilities {
     static func createSparseImage(_ url: URL, size: Int64) throws {
         try adviseEnoughDiskSpace(url.deletingLastPathComponent(), size: size)
 

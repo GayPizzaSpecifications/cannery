@@ -24,7 +24,7 @@ struct MacVirtualMachineConfigurationView: View {
 
     @State
     var virtualMachineBootRecovery: Bool
-    
+
     #if CANNED_MAC_USE_PRIVATE_APIS
     @State
     var virtualMachineBootDfu: Bool
@@ -50,7 +50,7 @@ struct MacVirtualMachineConfigurationView: View {
     @State
     var virtualMachineVncServerPassword: String
     #endif
-    
+
     @State
     var virtualMachineEnableMacInput: Bool
 
@@ -61,7 +61,7 @@ struct MacVirtualMachineConfigurationView: View {
     var virtualMachineSerialPortOutputType: SerialPortType
 
     @State
-    var customIpswPath: String? = nil
+    var customIpswPath: String?
 
     init(actionButtonName: String, options: VirtualMachineOptions, saveAction: @escaping (_ options: VirtualMachineOptions) -> Void, cancelAction: @escaping () -> Void) {
         self.actionButtonName = actionButtonName
@@ -83,7 +83,7 @@ struct MacVirtualMachineConfigurationView: View {
         virtualMachineVncServerPassword = options.vncServerPassword ?? "hunter2"
         #endif
         virtualMachineEnableMacInput = options.macInputMode ?? true
-        
+
         virtualMachineEnableSerialPortOutput = options.serialPortOutputEnabled
         virtualMachineSerialPortOutputType = options.serialPortOutputType
         virtualMachineBootRecovery = options.bootToRecovery ?? false
